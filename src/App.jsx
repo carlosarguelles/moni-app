@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Plus, ArrowLeft, Trash2, Wallet, Receipt } from 'lucide-react';
 import { loadProjects, saveProjects, formatCOP, haptic, getExpenseTotal } from './utils.js';
 import ExpenseList from './components/ExpenseList.jsx';
-import BalanceSheet from './components/BalanceSheet.jsx';
 import PersonSummary from './components/PersonSummary.jsx';
 import CreateExpenseSheet from './components/CreateExpenseSheet.jsx';
 import ActivityLog from './components/ActivityLog.jsx';
@@ -251,7 +250,6 @@ export default function App() {
           {activeProject ? (
             <>
               <PersonSummary expenses={activeProject.expenses} />
-              <BalanceSheet expenses={activeProject.expenses} />
 
               {activeProject.expenses.length === 0 ? (
                 <div className="text-center py-8">
