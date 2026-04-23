@@ -13,7 +13,7 @@
       in
       {
         devShells.default = pkgs.mkShell {
-          buildInputs = [ pkgs.nodejs_20 ];
+          buildInputs = [ pkgs.nodejs_20 pkgs.imagemagick ];
           shellHook = ''
             echo "Node $(node --version) | npm $(npm --version)"
             echo "Run: npm install && npm run dev"
@@ -24,7 +24,7 @@
           pname = "shared-expenses";
           version = "1.0.0";
           src = ./.;
-          npmDepsHash = "sha256-wNVyjp5+jyu6/CEW/QuiT7Oye8S02JqFpMAS+/iTnc0=";
+          npmDepsHash = "sha256-gWvaznE0/2ia03jK9LtwkZM9YiRo6yKFypeaVMvLEbU=";
           VITE_BASE_URL = builtins.getEnv "VITE_BASE_URL";
           buildPhase = "npm run build";
           installPhase = "cp -r dist/. $out/";
