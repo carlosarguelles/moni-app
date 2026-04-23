@@ -1,11 +1,11 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from 'react';
 
 const TabsContext = createContext(null);
 
 function useTabsContext() {
   const context = useContext(TabsContext);
   if (!context) {
-    throw new Error("Tabs.Tab must be used within Tabs");
+    throw new Error('Tabs.Tab must be used within Tabs');
   }
   return context;
 }
@@ -16,11 +16,10 @@ function Tab({ value, label, icon }) {
 
   return (
     <button
+      type="button"
       onClick={() => onTabChange(value)}
       className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all flex items-center gap-1.5 ${
-        isActive
-          ? "bg-[var(--color-teal)] text-white"
-          : "text-[var(--color-text-muted)]"
+        isActive ? 'bg-[var(--color-teal)] text-white' : 'text-[var(--color-text-muted)]'
       }`}
     >
       {icon}
