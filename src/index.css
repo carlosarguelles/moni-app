@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-nunito: 'Nunito', sans-serif;
+  --animate-slide-up: slideUp 0.27s ease forwards;
+  --animate-slide-down: slideDown 0.27s ease forwards;
+  --animate-overlay-in: overlayIn 0.27s ease forwards;
+  --animate-overlay-out: overlayOut 0.27s ease forwards;
+}
+
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+  input, select, textarea { font-family: inherit; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(20,184,166,0.35); border-radius: 2px; }
+
+  body.sheet-open { overflow: hidden; touch-action: none; }
+
+  :root {
+    --header-bg: rgba(240,249,247,0.9);
+    --bg: #F0F9F7;
+    --color-text: #1A2933;
+    --color-text-dim: #0F766E;
+    --color-text-muted: #14B8A6;
+    --color-text-faint: #5FADA0;
+    --color-text-ghost: #99D9D2;
+    --color-teal: #14B8A6;
+    --color-teal-dark: #0D9488;
+    --color-teal-light: #5FADA0;
+    --color-positive: #059669;
+    --color-negative: #DC2626;
+    --card-bg: rgba(255,255,255,0.8);
+    --card-border: rgba(20,184,166,0.18);
+    --stat-bg: rgba(20,184,166,0.08);
+    --stat-border: rgba(20,184,166,0.2);
+    --input-bg: rgba(255,255,255,0.9);
+    --input-border: rgba(20,184,166,0.25);
+    --cancel-bg: rgba(0,0,0,0.04);
+    --cancel-border: rgba(0,0,0,0.1);
+    --cancel-color: #5FADA0;
+    --toggle-bg: rgba(20,184,166,0.1);
+    --toggle-border: rgba(20,184,166,0.3);
+    --toggle-color: #14B8A6;
+    --color-title: #0D9488;
+    --progress-track: rgba(20,184,166,0.15);
+    --color-slate: #475569;
+    --color-slate-light: #64748B;
+  }
+
+  html, body { background: var(--bg); }
+}
+
+@keyframes slideUp   { from { transform: translateY(100%) } to { transform: translateY(0) } }
+@keyframes slideDown { from { transform: translateY(0) } to { transform: translateY(100%) } }
+@keyframes overlayIn  { from { opacity: 0 } to { opacity: 1 } }
+@keyframes overlayOut { from { opacity: 1 } to { opacity: 0 } }
+
+@layer utilities {
+  .pt-safe-header { padding-top: env(safe-area-inset-top, 0px); }
+  .h-safe-header  { height: calc(60px + env(safe-area-inset-top, 0px)); }
+  .pt-safe-top    { padding-top: calc(60px + env(safe-area-inset-top, 0px) + 20px); }
+  .pb-safe-fab    { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px); }
+  .bottom-safe-fab { bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); }
+  .pb-safe-sheet  { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 28px); }
+}
