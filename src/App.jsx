@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, ArrowLeft, Trash2, Wallet, Receipt } from 'lucide-react';
-import { loadProjects, saveProjects, formatCOP, haptic } from './utils.js';
+import { loadProjects, saveProjects, formatCOP, haptic, getExpenseTotal } from './utils.js';
 import ExpenseList from './components/ExpenseList.jsx';
 import BalanceSheet from './components/BalanceSheet.jsx';
 import PersonSummary from './components/PersonSummary.jsx';
@@ -70,26 +70,29 @@ export default function App() {
 
   function addExpense(expense) {
     haptic(20);
+    const total = getExpenseTotal(expense);
     updateProject(activeProjectId, p => ({
       ...p,
       expenses: [...p.expenses, { id: crypto.randomUUID(), ...expense }]
     }));
     addLog(activeProjectId, {
       type: "created",
-      message: `Gasto creado: ${expense.description} (${formatCOP(expense.amount)})`,
+      message: `Gasto creado: ${expense.description} (${formatCOP(total)})`,
       expenseId: null,
     });
   }
 
   function updateExpense(data, original) {
     haptic(20);
+    const oldTotal = getExpenseTotal(original);
+    const newTotal = getExpenseTotal(data);
     updateProject(activeProjectId, p => ({
       ...p,
       expenses: p.expenses.map(e => e.id === original.id ? { ...e, ...data } : e)
     }));
     addLog(activeProjectId, {
       type: "updated",
-      message: `Gasto actualizado: ${data.description} (antes: ${formatCOP(original.amount)} → ahora: ${formatCOP(data.amount)})`,
+      message: `Gasto actualizado: ${data.description} (antes: ${formatCOP(oldTotal)} → ahora: ${formatCOP(newTotal)})`,
       expenseId: original.id,
     });
     setEditingExpense(null);
@@ -177,9 +180,9 @@ export default function App() {
       {projects.length > 0 && (
         <div className="space-y-3">
           {projects.map(project => {
-            const total = project.expenses
-              .filter(e => e.status === "paid")
-              .reduce((sum, e) => sum + e.amount, 0);
+              const total = project.expenses
+                .filter(e => e.status === "paid")
+                .reduce((sum, e) => sum + getExpenseTotal(e), 0);
             return (
               <div
                 key={project.id}

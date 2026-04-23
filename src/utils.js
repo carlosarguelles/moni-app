@@ -4,6 +4,27 @@ export const formatCOP = (n) => "$" + n.toLocaleString("es-CO");
 
 export function haptic(ms = 15) { if (navigator.vibrate) navigator.vibrate(ms); }
 
+export function getExpenseTotal(expense) {
+  if (expense.items && expense.items.length > 0) {
+    return expense.items.reduce((sum, item) => sum + (item.amount || 0), 0);
+  }
+  return expense.amount || 0;
+}
+
+export function toItemizedExpense(expense) {
+  if (expense.items && expense.items.length > 0) {
+    return expense;
+  }
+  return {
+    ...expense,
+    items: [{
+      id: "legacy",
+      description: expense.description,
+      amount: expense.amount,
+    }]
+  };
+}
+
 export function loadProjects() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -25,7 +46,7 @@ export function calculateBalances(expenses) {
   const balances = {};
   for (const exp of expenses) {
     if (!balances[exp.person]) balances[exp.person] = 0;
-    balances[exp.person] += exp.status === "paid" ? exp.amount : 0;
+    balances[exp.person] += exp.status === "paid" ? getExpenseTotal(exp) : 0;
   }
   return balances;
 }
@@ -33,7 +54,7 @@ export function calculateBalances(expenses) {
 export function calculateDebts(expenses) {
   const totalExpense = expenses
     .filter(e => e.status === "paid")
-    .reduce((sum, e) => sum + e.amount, 0);
+    .reduce((sum, e) => sum + getExpenseTotal(e), 0);
   
   const people = [...new Set(expenses.map(e => e.person))];
   const perPerson = people.length > 0 ? totalExpense / people.length : 0;
@@ -42,9 +63,9 @@ export function calculateDebts(expenses) {
   for (const exp of expenses) {
     if (!debts[exp.person]) debts[exp.person] = 0;
     if (exp.status === "paid") {
-      debts[exp.person] += exp.amount;
+      debts[exp.person] += getExpenseTotal(exp);
     } else {
-      debts[exp.person] += exp.amount * 0.5;
+      debts[exp.person] += getExpenseTotal(exp) * 0.5;
     }
   }
 

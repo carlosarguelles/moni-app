@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatCOP } from '../utils.js';
+import { formatCOP, getExpenseTotal } from '../utils.js';
 
 export default function BalanceSheet({ expenses }) {
   const [strategy, setStrategy] = useState("equal");
@@ -15,7 +15,7 @@ export default function BalanceSheet({ expenses }) {
 
   const totalPaid = expenses
     .filter(e => e.status === "paid")
-    .reduce((sum, e) => sum + e.amount, 0);
+    .reduce((sum, e) => sum + getExpenseTotal(e), 0);
 
   const perPerson = people.length > 0 ? totalPaid / people.length : 0;
 
@@ -24,15 +24,15 @@ export default function BalanceSheet({ expenses }) {
     if (strategy === "equal") {
       const paid = expenses
         .filter(e => e.person === person && e.status === "paid")
-        .reduce((sum, e) => sum + e.amount, 0);
+        .reduce((sum, e) => sum + getExpenseTotal(e), 0);
       balances[person] = paid - perPerson;
     } else {
       const owed = expenses
         .filter(e => e.person === person)
-        .reduce((sum, e) => sum + e.amount, 0);
+        .reduce((sum, e) => sum + getExpenseTotal(e), 0);
       const paidOwn = expenses
         .filter(e => e.person === person && e.status === "paid")
-        .reduce((sum, e) => sum + e.amount, 0);
+        .reduce((sum, e) => sum + getExpenseTotal(e), 0);
       balances[person] = paidOwn - owed;
     }
   }

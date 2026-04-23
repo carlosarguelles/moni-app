@@ -1,4 +1,4 @@
-import { formatCOP } from '../utils.js';
+import { formatCOP, getExpenseTotal } from '../utils.js';
 
 export default function PersonSummary({ expenses }) {
   const people = [...new Set(expenses.map(e => e.person))];
@@ -7,9 +7,9 @@ export default function PersonSummary({ expenses }) {
 
   const summaries = people.map(person => {
     const personExpenses = expenses.filter(e => e.person === person);
-    const total = personExpenses.reduce((sum, e) => sum + e.amount, 0);
-    const paid = personExpenses.filter(e => e.status === "paid").reduce((sum, e) => sum + e.amount, 0);
-    const pending = personExpenses.filter(e => e.status === "pending").reduce((sum, e) => sum + e.amount, 0);
+    const total = personExpenses.reduce((sum, e) => sum + getExpenseTotal(e), 0);
+    const paid = personExpenses.filter(e => e.status === "paid").reduce((sum, e) => sum + getExpenseTotal(e), 0);
+    const pending = personExpenses.filter(e => e.status === "pending").reduce((sum, e) => sum + getExpenseTotal(e), 0);
     return { name: person, total, paid, pending, count: personExpenses.length };
   });
 

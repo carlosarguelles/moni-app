@@ -6,12 +6,34 @@ import {
   createColumnHelper,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { ArrowUpDown, Trash2, CheckCircle, Clock, Pencil } from 'lucide-react';
-import { formatCOP } from '../utils.js';
+import { ArrowUpDown, Trash2, CheckCircle, Clock, Pencil, ChevronDown, ChevronRight } from 'lucide-react';
+import { formatCOP, getExpenseTotal } from '../utils.js';
 
 const columnHelper = createColumnHelper();
 
 const columns = [
+  columnHelper.display({
+    id: 'expand',
+    header: () => null,
+    cell: ({ row, table }) => {
+      const { expanded, onToggleExpand } = table.options.meta;
+      const hasItems = row.original.items && row.original.items.length > 1;
+      if (!hasItems) return <div className="w-6" />;
+      const isExpanded = !!expanded[row.original.id];
+      return (
+        <button
+          onClick={() => onToggleExpand(row.original.id)}
+          className="p-1 rounded hover:bg-[var(--card-bg)] transition-colors"
+        >
+          {isExpanded ? (
+            <ChevronDown size={16} className="text-[var(--color-text-muted)]" />
+          ) : (
+            <ChevronRight size={16} className="text-[var(--color-text-muted)]" />
+          )}
+        </button>
+      );
+    },
+  }),
   columnHelper.accessor('description', {
     header: 'Descripción',
     cell: info => <span className="font-bold text-[15px]">{info.getValue()}</span>,
@@ -20,12 +42,20 @@ const columns = [
     header: 'Persona',
     cell: info => <span className="text-[13px] text-[var(--color-text-faint)]">{info.getValue()}</span>,
   }),
-  columnHelper.accessor('amount', {
+  columnHelper.accessor(row => getExpenseTotal(row), {
+    id: 'amount',
     header: 'Monto',
     cell: info => (
-      <span className="font-extrabold text-[16px] text-[var(--color-teal-dark)]">
-        {formatCOP(info.getValue())}
-      </span>
+      <div className="flex items-center gap-2">
+        <span className="font-extrabold text-[16px] text-[var(--color-teal-dark)]">
+          {formatCOP(info.getValue())}
+        </span>
+        {info.row.original.items && info.row.original.items.length > 1 && (
+          <span className="text-[11px] text-[var(--color-text-muted)]">
+            ({info.row.original.items.length} ítems)
+          </span>
+        )}
+      </div>
     ),
   }),
   columnHelper.accessor('date', {
@@ -79,6 +109,11 @@ const columns = [
 
 export default function ExpenseTable({ expenses, onToggle, onDelete, onEdit }) {
   const [sorting, setSorting] = useState([]);
+  const [expanded, setExpanded] = useState({});
+
+  function toggleExpand(id) {
+    setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
+  }
 
   const table = useReactTable({
     data: expenses,
@@ -87,7 +122,7 @@ export default function ExpenseTable({ expenses, onToggle, onDelete, onEdit }) {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    meta: { onToggle, onDelete, onEdit },
+    meta: { onToggle, onDelete, onEdit, expanded, onToggleExpand: toggleExpand },
   });
 
   return (
@@ -99,12 +134,12 @@ export default function ExpenseTable({ expenses, onToggle, onDelete, onEdit }) {
               {headerGroup.headers.map(header => (
                 <th
                   key={header.id}
-                  className="pb-3 pt-2 px-2 text-[12px] font-semibold text-[var(--color-text-faint)] uppercase tracking-wide cursor-pointer select-none"
+                  className={`pb-3 pt-2 px-2 text-[12px] font-semibold text-[var(--color-text-faint)] uppercase tracking-wide${header.id === 'expand' ? '' : ' cursor-pointer select-none'}`}
                   onClick={header.column.getToggleSortingHandler()}
                 >
                   <div className="flex items-center gap-1">
                     {flexRender(header.column.columnDef.header, header.getContext())}
-                    <ArrowUpDown size={12} className="opacity-40" />
+                    {header.id === 'expand' ? null : <ArrowUpDown size={12} className="opacity-40" />}
                   </div>
                 </th>
               ))}
@@ -112,18 +147,54 @@ export default function ExpenseTable({ expenses, onToggle, onDelete, onEdit }) {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map(row => (
-            <tr
-              key={row.id}
-              className="border-b border-[var(--card-border)] hover:bg-[var(--card-bg)] transition-colors"
-            >
-              {row.getVisibleCells().map(cell => (
-                <td key={cell.id} className="py-3 px-2">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {table.getRowModel().rows.map(row => {
+            const isExpanded = !!expanded[row.original.id];
+            const items = row.original.items || [];
+            const hasItems = items.length > 1;
+
+            return (
+              <>
+                <tr
+                  key={row.id}
+                  className="border-b border-[var(--card-border)] hover:bg-[var(--card-bg)] transition-colors"
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <td key={cell.id} className="py-3 px-2">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+                {isExpanded && hasItems && (
+                  <tr key={`${row.id}-items`} className="bg-[var(--bg)]">
+                    <td colSpan={columns.length} className="py-1 px-2">
+                      <table className="w-full">
+                        <tbody>
+                          {items.map((item, idx) => (
+                            <tr key={item.id} className="border-b border-[var(--card-border)] last:border-b-0">
+                              <td className="py-2 px-2 w-6" />
+                              <td className="py-2 px-2 text-[14px] text-[var(--color-text)] pl-4">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[var(--color-text-muted)] text-[12px]">{idx + 1}.</span>
+                                  <span>{item.description}</span>
+                                </div>
+                              </td>
+                              <td className="py-2 px-2 text-[14px] font-semibold text-[var(--color-text)] text-right pr-4">
+                                {formatCOP(item.amount)}
+                              </td>
+                              <td className="py-2 px-2" />
+                              <td className="py-2 px-2" />
+                              <td className="py-2 px-2" />
+                              <td className="py-2 px-2" />
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                )}
+              </>
+            );
+          })}
         </tbody>
       </table>
     </div>

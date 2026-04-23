@@ -1,8 +1,11 @@
-import { Trash2, CheckCircle, Clock, Pencil } from 'lucide-react';
-import { formatCOP } from '../utils.js';
+import { useState } from 'react';
+import { Trash2, CheckCircle, Clock, Pencil, ChevronDown, ChevronRight } from 'lucide-react';
+import { formatCOP, getExpenseTotal } from '../utils.js';
 
 export default function ExpenseCard({ expense, onToggle, onDelete, onEdit }) {
+  const [expanded, setExpanded] = useState(false);
   const isPaid = expense.status === "paid";
+  const hasItems = expense.items && expense.items.length > 1;
 
   return (
     <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-[16px] p-4 mb-3 transition-all">
@@ -12,7 +15,15 @@ export default function ExpenseCard({ expense, onToggle, onDelete, onEdit }) {
           <p className="text-[13px] text-[var(--color-text-faint)] mt-0.5">{expense.person}</p>
         </div>
         <div className="flex items-center gap-2 shrink-0 ml-3">
-          <span className="font-extrabold text-[16px] text-[var(--color-teal-dark)]">{formatCOP(expense.amount)}</span>
+          <span className="font-extrabold text-[16px] text-[var(--color-teal-dark)]">{formatCOP(getExpenseTotal(expense))}</span>
+          {hasItems && (
+            <button
+              onClick={() => setExpanded(prev => !prev)}
+              className="text-[var(--color-text-muted)] p-1"
+            >
+              {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+          )}
           <button
             onClick={() => onEdit(expense)}
             className="bg-[rgba(20,184,166,0.08)] border border-[rgba(20,184,166,0.25)] text-[var(--color-teal-dark)] rounded-lg p-[6px_8px] flex items-center"
@@ -27,6 +38,21 @@ export default function ExpenseCard({ expense, onToggle, onDelete, onEdit }) {
           </button>
         </div>
       </div>
+
+      {hasItems && expanded && (
+        <div className="mt-3 mb-2 pl-2 border-l-2 border-[var(--color-teal-dark)] space-y-1.5">
+          {expense.items.map((item, idx) => (
+            <div key={item.id} className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] text-[var(--color-text-muted)]">{idx + 1}.</span>
+                <span className="text-[13px] text-[var(--color-text)]">{item.description}</span>
+              </div>
+              <span className="text-[13px] font-semibold text-[var(--color-text)]">{formatCOP(item.amount)}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {expense.note && (
         <p className="text-[13px] text-[var(--color-text-muted)] mb-2 pl-0.5">{expense.note}</p>
       )}
