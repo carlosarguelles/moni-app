@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ExpenseCard from './ExpenseCard.jsx';
 import ExpenseTable from './ExpenseTable.jsx';
 
@@ -16,12 +16,14 @@ export default function ExpenseList({ expenses, onToggle, onDelete, onEdit }) {
   const sorted = expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
 
   if (isDesktop) {
-    return <ExpenseTable expenses={sorted} onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />;
+    return (
+      <ExpenseTable expenses={sorted} onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+    );
   }
 
   return (
     <div>
-      {sorted.map(expense => (
+      {sorted.map((expense) => (
         <ExpenseCard
           key={expense.id}
           expense={expense}

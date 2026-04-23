@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { X, Check, Plus, Trash2, Square, Layers } from 'lucide-react';
+import { Check, Layers, Plus, Square, Trash2, X } from 'lucide-react';
+import { useState } from 'react';
+import { formatCOP } from '../utils.js';
 import Tabs from './Tabs.jsx';
-import { getExpenseTotal, formatCOP } from '../utils.js';
 
 export default function CreateExpenseSheet({ onSave, onClose, expense, people }) {
   const isEdit = !!expense;
-  const [description, setDescription] = useState(expense?.description ?? "");
-  const [person, setPerson] = useState(expense?.person ?? "");
-  const [date, setDate] = useState(expense?.date ?? new Date().toISOString().split("T")[0]);
-  const [status, setStatus] = useState(expense?.status ?? "pending");
-  const [note, setNote] = useState(expense?.note ?? "");
+  const [description, setDescription] = useState(expense?.description ?? '');
+  const [person, setPerson] = useState(expense?.person ?? '');
+  const [date, setDate] = useState(expense?.date ?? new Date().toISOString().split('T')[0]);
+  const [status, setStatus] = useState(expense?.status ?? 'pending');
+  const [note, setNote] = useState(expense?.note ?? '');
   const [closing, setClosing] = useState(false);
   const [isStacked, setIsStacked] = useState(() => {
     if (expense?.items && expense.items.length > 1) return true;
@@ -17,31 +17,33 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
     return false;
   });
   const [singleAmount, setSingleAmount] = useState(
-    expense?.items?.length === 1 ? expense.items[0].amount?.toString() ?? "" : expense?.amount?.toString() ?? ""
+    expense?.items?.length === 1
+      ? (expense.items[0].amount?.toString() ?? '')
+      : (expense?.amount?.toString() ?? '')
   );
   const [items, setItems] = useState(() => {
     if (expense?.items && expense.items.length > 0) {
-      return expense.items.map(i => ({ ...i }));
+      return expense.items.map((i) => ({ ...i }));
     }
-    return [{ id: crypto.randomUUID(), description: "", amount: "" }];
+    return [{ id: crypto.randomUUID(), description: '', amount: '' }];
   });
 
   const total = isStacked
     ? items.reduce((sum, i) => sum + (Number(i.amount) || 0), 0)
-    : (Number(singleAmount) || 0);
+    : Number(singleAmount) || 0;
 
   function handleClose() {
     setClosing(true);
     setTimeout(() => {
       setClosing(false);
-      setDescription("");
-      setPerson("");
-      setSingleAmount("");
-      setDate(new Date().toISOString().split("T")[0]);
-      setStatus("pending");
-      setNote("");
+      setDescription('');
+      setPerson('');
+      setSingleAmount('');
+      setDate(new Date().toISOString().split('T')[0]);
+      setStatus('pending');
+      setNote('');
       setIsStacked(false);
-      setItems([{ id: crypto.randomUUID(), description: "", amount: "" }]);
+      setItems([{ id: crypto.randomUUID(), description: '', amount: '' }]);
       onClose();
     }, 270);
   }
@@ -51,7 +53,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
 
     let saveData;
     if (isStacked) {
-      const validItems = items.filter(i => i.description.trim() && i.amount);
+      const validItems = items.filter((i) => i.description.trim() && i.amount);
       if (validItems.length === 0) return;
       saveData = {
         description: description.trim(),
@@ -59,8 +61,8 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
         date,
         status,
         note: note.trim(),
-        items: validItems.map(i => ({
-          id: i.id === "legacy" ? crypto.randomUUID() : i.id,
+        items: validItems.map((i) => ({
+          id: i.id === 'legacy' ? crypto.randomUUID() : i.id,
           description: i.description.trim(),
           amount: Math.max(1, Number(i.amount) || 0),
         })),
@@ -74,11 +76,13 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
         date,
         status,
         note: note.trim(),
-        items: [{
-          id: crypto.randomUUID(),
-          description: description.trim(),
-          amount,
-        }],
+        items: [
+          {
+            id: crypto.randomUUID(),
+            description: description.trim(),
+            amount,
+          },
+        ],
       };
     }
 
@@ -87,75 +91,111 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
   }
 
   function addItem() {
-    setItems(prev => [...prev, { id: crypto.randomUUID(), description: "", amount: "" }]);
+    setItems((prev) => [...prev, { id: crypto.randomUUID(), description: '', amount: '' }]);
   }
 
   function removeItem(id) {
-    setItems(prev => prev.filter(i => i.id !== id));
+    setItems((prev) => prev.filter((i) => i.id !== id));
   }
 
   function updateItem(id, field, value) {
-    setItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, [field]: value } : i)));
   }
 
   return (
     <>
-      <div
-        className={`fixed inset-0 z-40 bg-black/40 ${closing ? "animate-overlay-out" : "animate-overlay-in"}`}
+      <button
+        type="button"
+        className={`fixed inset-0 z-40 bg-black/40 ${closing ? 'animate-overlay-out' : 'animate-overlay-in'}`}
         onClick={handleClose}
+        aria-label="Cerrar"
       />
-      <div className={`fixed bottom-0 left-0 right-0 z-50 bg-[var(--bg)] rounded-t-[24px] p-5 pb-[calc(28px+env(safe-area-inset-bottom))] animate-slide-up`}>
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 bg-[var(--bg)] rounded-t-[24px] p-5 pb-[calc(28px+env(safe-area-inset-bottom))] animate-slide-up`}
+      >
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-[18px] font-extrabold text-[var(--color-title)]">{isEdit ? "Editar Gasto" : "Nuevo Gasto"}</h2>
-          <button onClick={handleClose} className="p-2 rounded-full bg-[var(--cancel-bg)] border border-[var(--cancel-border)] text-[var(--cancel-color)]">
+          <h2 className="text-[18px] font-extrabold text-[var(--color-title)]">
+            {isEdit ? 'Editar Gasto' : 'Nuevo Gasto'}
+          </h2>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="p-2 rounded-full bg-[var(--cancel-bg)] border border-[var(--cancel-border)] text-[var(--cancel-color)]"
+          >
             <X size={18} />
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block">Descripción</label>
+            <label
+              htmlFor="expense-description"
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block"
+            >
+              Descripción
+            </label>
             <input
+              id="expense-description"
               type="text"
               value={description}
-              onChange={e => setDescription(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="Ej: Cena restaurant"
               className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
             />
           </div>
 
           <div>
-            <label className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block">Persona</label>
+            <label
+              htmlFor="expense-person"
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block"
+            >
+              Persona
+            </label>
             <input
+              id="expense-person"
               type="text"
               value={person}
-              onChange={e => setPerson(e.target.value)}
+              onChange={(e) => setPerson(e.target.value)}
               placeholder="Ej: Carlos"
               list="people-suggestions"
               className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
             />
             {people?.length > 0 && (
               <datalist id="people-suggestions">
-                {people.map(p => <option key={p} value={p} />)}
+                {people.map((p) => (
+                  <option key={p} value={p} />
+                ))}
               </datalist>
             )}
           </div>
 
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block">Fecha</label>
+              <label
+                htmlFor="expense-date"
+                className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block"
+              >
+                Fecha
+              </label>
               <input
+                id="expense-date"
                 type="date"
                 value={date}
-                onChange={e => setDate(e.target.value)}
+                onChange={(e) => setDate(e.target.value)}
                 className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)]"
               />
             </div>
             <div className="flex-1">
-              <label className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block">Estado</label>
+              <label
+                htmlFor="expense-status"
+                className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block"
+              >
+                Estado
+              </label>
               <select
+                id="expense-status"
                 value={status}
-                onChange={e => setStatus(e.target.value)}
+                onChange={(e) => setStatus(e.target.value)}
                 className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)]"
               >
                 <option value="pending">Pendiente</option>
@@ -166,8 +206,13 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[13px] font-semibold text-[var(--color-text-muted)]">Tipo de gasto</label>
-              <Tabs value={isStacked ? 'apilado' : 'simple'} onChange={v => setIsStacked(v === 'apilado')}>
+              <span className="text-[13px] font-semibold text-[var(--color-text-muted)]">
+                Tipo de gasto
+              </span>
+              <Tabs
+                value={isStacked ? 'apilado' : 'simple'}
+                onChange={(v) => setIsStacked(v === 'apilado')}
+              >
                 <Tabs.Tab value="simple" label="Simple" icon={<Square size={14} />} />
                 <Tabs.Tab value="apilado" label="Apilado" icon={<Layers size={14} />} />
               </Tabs>
@@ -175,11 +220,17 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
 
             {!isStacked ? (
               <div>
-                <label className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block">Monto</label>
+                <label
+                  htmlFor="expense-amount"
+                  className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block"
+                >
+                  Monto
+                </label>
                 <input
+                  id="expense-amount"
                   type="number"
                   value={singleAmount}
-                  onChange={e => setSingleAmount(e.target.value)}
+                  onChange={(e) => setSingleAmount(e.target.value)}
                   placeholder="50000"
                   min="1"
                   className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
@@ -187,14 +238,18 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
                 {total > 0 && (
                   <div className="mt-2 text-right">
                     <span className="text-[13px] text-[var(--color-text-muted)]">Total: </span>
-                    <span className="text-[16px] font-bold text-[var(--color-teal-dark)]">{formatCOP(total)}</span>
+                    <span className="text-[16px] font-bold text-[var(--color-teal-dark)]">
+                      {formatCOP(total)}
+                    </span>
                   </div>
                 )}
               </div>
             ) : (
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-[13px] font-semibold text-[var(--color-text-muted)]">Ítems</label>
+                  <span className="text-[13px] font-semibold text-[var(--color-text-muted)]">
+                    Ítems
+                  </span>
                   <button
                     type="button"
                     onClick={addItem}
@@ -209,14 +264,14 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
                       <input
                         type="text"
                         value={item.description}
-                        onChange={e => updateItem(item.id, "description", e.target.value)}
+                        onChange={(e) => updateItem(item.id, 'description', e.target.value)}
                         placeholder={`Ítem ${idx + 1} (ej: Fish)`}
                         className="flex-1 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-3 py-2.5 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
                       />
                       <input
                         type="number"
                         value={item.amount}
-                        onChange={e => updateItem(item.id, "amount", e.target.value)}
+                        onChange={(e) => updateItem(item.id, 'amount', e.target.value)}
                         placeholder="0"
                         min="1"
                         className="w-28 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-3 py-2.5 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
@@ -236,7 +291,9 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
                 {total > 0 && (
                   <div className="mt-2 text-right">
                     <span className="text-[13px] text-[var(--color-text-muted)]">Total: </span>
-                    <span className="text-[16px] font-bold text-[var(--color-teal-dark)]">{formatCOP(total)}</span>
+                    <span className="text-[16px] font-bold text-[var(--color-teal-dark)]">
+                      {formatCOP(total)}
+                    </span>
                   </div>
                 )}
               </div>
@@ -244,10 +301,16 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
           </div>
 
           <div>
-            <label className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block">Nota (opcional)</label>
+            <label
+              htmlFor="expense-note"
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block"
+            >
+              Nota (opcional)
+            </label>
             <textarea
+              id="expense-note"
               value={note}
-              onChange={e => setNote(e.target.value)}
+              onChange={(e) => setNote(e.target.value)}
               placeholder="Algo adicional..."
               rows="2"
               className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)] resize-none"
@@ -256,15 +319,18 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
         </div>
 
         <button
+          type="button"
           onClick={handleSave}
           disabled={
             !description.trim() ||
             !person.trim() ||
-            (!isStacked ? !singleAmount || Number(singleAmount) < 1 : items.filter(i => i.description.trim() && i.amount).length === 0)
+            (!isStacked
+              ? !singleAmount || Number(singleAmount) < 1
+              : items.filter((i) => i.description.trim() && i.amount).length === 0)
           }
           className="w-full mt-5 bg-[var(--color-teal)] text-white font-bold text-[16px] py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Check size={18} /> {isEdit ? "Actualizar Gasto" : "Guardar Gasto"}
+          <Check size={18} /> {isEdit ? 'Actualizar Gasto' : 'Guardar Gasto'}
         </button>
       </div>
     </>

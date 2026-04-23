@@ -13,7 +13,11 @@
       in
       {
         devShells.default = pkgs.mkShell {
-          buildInputs = [ pkgs.nodejs_20 pkgs.imagemagick ];
+          buildInputs = with pkgs; [
+            nodejs_20
+            imagemagick
+            biome
+          ];
           shellHook = ''
             echo "Node $(node --version) | npm $(npm --version)"
             echo "Run: npm install && npm run dev"
@@ -24,7 +28,8 @@
           pname = "moni";
           version = "1.0.0";
           src = ./.;
-          npmDepsHash = "sha256-gWvaznE0/2ia03jK9LtwkZM9YiRo6yKFypeaVMvLEbU=";
+          npmDepsHash = "sha256-ja3LYu7PalTgFEvrEDNMquMWKjZG4RvqgXfsRn9gOF0=";
+          nativeBuildInputs = [ nixpkgs.legacyPackages.${system}.nodejs ];
           VITE_BASE_URL = builtins.getEnv "VITE_BASE_URL";
           buildPhase = "npm run build";
           installPhase = "cp -r dist/. $out/";
