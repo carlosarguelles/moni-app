@@ -240,7 +240,7 @@ export default function App() {
         ) : (
           <>
             <Receipt size={26} className="text-[var(--color-title)] shrink-0" />
-            <h1 className="text-[20px] ml-[10px] flex-1 font-black text-[var(--color-title)] tracking-[-0.02em] leading-[1.1]">Gastos Compartidos</h1>
+            <h1 className="text-[20px] ml-[10px] flex-1 font-black text-[var(--color-title)] tracking-[-0.02em] leading-[1.1]">Moni</h1>
           </>
         )}
       </header>

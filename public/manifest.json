@@ -1,7 +1,7 @@
 {
-  "name": "Gastos Compartidos",
-  "short_name": "Gastos",
-  "description": "Rastrea gastos compartidos y balances entre personas",
+  "name": "Moni",
+  "short_name": "Moni",
+  "description": "Moni te ayuda a ver, entender y controlar tus gastos en segundos.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#F0F9F7",

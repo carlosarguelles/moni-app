@@ -1,4 +1,4 @@
-export const STORAGE_KEY = "shared_expenses_v1";
+export const STORAGE_KEY = "moni_v1";
 
 export const formatCOP = (n) => "$" + n.toLocaleString("es-CO");
 
