@@ -3,7 +3,7 @@ import { X, Check, Plus, Trash2, Square, Layers } from 'lucide-react';
 import Tabs from './Tabs.jsx';
 import { getExpenseTotal, formatCOP } from '../utils.js';
 
-export default function CreateExpenseSheet({ onSave, onClose, expense }) {
+export default function CreateExpenseSheet({ onSave, onClose, expense, people }) {
   const isEdit = !!expense;
   const [description, setDescription] = useState(expense?.description ?? "");
   const [person, setPerson] = useState(expense?.person ?? "");
@@ -131,8 +131,14 @@ export default function CreateExpenseSheet({ onSave, onClose, expense }) {
               value={person}
               onChange={e => setPerson(e.target.value)}
               placeholder="Ej: Carlos"
+              list="people-suggestions"
               className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[15px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
             />
+            {people?.length > 0 && (
+              <datalist id="people-suggestions">
+                {people.map(p => <option key={p} value={p} />)}
+              </datalist>
+            )}
           </div>
 
           <div className="flex gap-3">

@@ -300,6 +300,7 @@ export default function App() {
           onSave={editingExpense ? updateExpense : addExpense}
           onClose={() => { setShowCreateExpense(false); setEditingExpense(null); }}
           expense={editingExpense}
+          people={[...new Set(activeProject.expenses.map(e => e.person).filter(Boolean))]}
         />
       )}
     </div>
