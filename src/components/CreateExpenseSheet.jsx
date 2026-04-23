@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { X, Check } from 'lucide-react';
 
-export default function CreateExpenseSheet({ onSave, onClose }) {
-  const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("");
-  const [person, setPerson] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-  const [status, setStatus] = useState("pending");
-  const [note, setNote] = useState("");
+export default function CreateExpenseSheet({ onSave, onClose, expense }) {
+  const isEdit = !!expense;
+  const [description, setDescription] = useState(expense?.description ?? "");
+  const [amount, setAmount] = useState(expense?.amount?.toString() ?? "");
+  const [person, setPerson] = useState(expense?.person ?? "");
+  const [date, setDate] = useState(expense?.date ?? new Date().toISOString().split("T")[0]);
+  const [status, setStatus] = useState(expense?.status ?? "pending");
+  const [note, setNote] = useState(expense?.note ?? "");
   const [closing, setClosing] = useState(false);
 
   function handleClose() {
@@ -26,14 +27,15 @@ export default function CreateExpenseSheet({ onSave, onClose }) {
 
   function handleSave() {
     if (!description.trim() || !amount || !person.trim()) return;
-    onSave({
+    const data = {
       description: description.trim(),
       amount: Math.max(1, Number(amount) || 0),
       person: person.trim(),
       date,
       status,
       note: note.trim(),
-    });
+    };
+    onSave(data, isEdit ? expense : undefined);
     handleClose();
   }
 
@@ -45,7 +47,7 @@ export default function CreateExpenseSheet({ onSave, onClose }) {
       />
       <div className={`fixed bottom-0 left-0 right-0 z-50 bg-[var(--bg)] rounded-t-[24px] p-5 pb-[calc(28px+env(safe-area-inset-bottom))] animate-slide-up`}>
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-[18px] font-extrabold text-[var(--color-title)]">Nuevo Gasto</h2>
+          <h2 className="text-[18px] font-extrabold text-[var(--color-title)]">{isEdit ? "Editar Gasto" : "Nuevo Gasto"}</h2>
           <button onClick={handleClose} className="p-2 rounded-full bg-[var(--cancel-bg)] border border-[var(--cancel-border)] text-[var(--cancel-color)]">
             <X size={18} />
           </button>
@@ -126,7 +128,7 @@ export default function CreateExpenseSheet({ onSave, onClose }) {
           disabled={!description.trim() || !amount || !person.trim()}
           className="w-full mt-5 bg-[var(--color-teal)] text-white font-bold text-[15px] py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Check size={18} /> Guardar Gasto
+          <Check size={18} /> {isEdit ? "Actualizar Gasto" : "Guardar Gasto"}
         </button>
       </div>
     </>

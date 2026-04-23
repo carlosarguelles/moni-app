@@ -5,11 +5,13 @@ import ExpenseList from './components/ExpenseList.jsx';
 import BalanceSheet from './components/BalanceSheet.jsx';
 import PersonSummary from './components/PersonSummary.jsx';
 import CreateExpenseSheet from './components/CreateExpenseSheet.jsx';
+import ActivityLog from './components/ActivityLog.jsx';
 
 export default function App() {
   const [projects, setProjects] = useState(() => loadProjects());
   const [activeProjectId, setActiveProjectId] = useState(null);
   const [showCreateExpense, setShowCreateExpense] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [viewState, setViewState] = useState("idle");
@@ -20,6 +22,13 @@ export default function App() {
 
   function updateProject(id, updater) {
     setProjects(ps => ps.map(p => p.id === id ? updater(p) : p));
+  }
+
+  function addLog(projectId, log) {
+    updateProject(projectId, p => ({
+      ...p,
+      logs: [...(p.logs || []), { id: crypto.randomUUID(), timestamp: new Date().toISOString(), ...log }],
+    }));
   }
 
   function navigateTo(projectId) {
@@ -41,6 +50,7 @@ export default function App() {
       id: crypto.randomUUID(),
       name,
       expenses: [],
+      logs: [],
       createdAt: new Date().toISOString(),
     };
     setProjects(ps => [...ps, project]);
@@ -64,10 +74,31 @@ export default function App() {
       ...p,
       expenses: [...p.expenses, { id: crypto.randomUUID(), ...expense }]
     }));
+    addLog(activeProjectId, {
+      type: "created",
+      message: `Gasto creado: ${expense.description} (${formatCOP(expense.amount)})`,
+      expenseId: null,
+    });
+  }
+
+  function updateExpense(data, original) {
+    haptic(20);
+    updateProject(activeProjectId, p => ({
+      ...p,
+      expenses: p.expenses.map(e => e.id === original.id ? { ...e, ...data } : e)
+    }));
+    addLog(activeProjectId, {
+      type: "updated",
+      message: `Gasto actualizado: ${data.description} (antes: ${formatCOP(original.amount)} → ahora: ${formatCOP(data.amount)})`,
+      expenseId: original.id,
+    });
+    setEditingExpense(null);
   }
 
   function toggleExpenseStatus(expenseId) {
     haptic(10);
+    const expense = activeProject?.expenses.find(e => e.id === expenseId);
+    const newStatus = expense?.status === "paid" ? "pending" : "paid";
     updateProject(activeProjectId, p => ({
       ...p,
       expenses: p.expenses.map(e =>
@@ -76,14 +107,27 @@ export default function App() {
           : e
       )
     }));
+    addLog(activeProjectId, {
+      type: "status_changed",
+      message: `${expense?.description}: marcado como ${newStatus === "paid" ? "Pagado" : "Pendiente"}`,
+      expenseId,
+    });
   }
 
   function deleteExpense(expenseId) {
     haptic(15);
+    const expense = activeProject?.expenses.find(e => e.id === expenseId);
     updateProject(activeProjectId, p => ({
       ...p,
       expenses: p.expenses.filter(e => e.id !== expenseId)
     }));
+    if (expense) {
+      addLog(activeProjectId, {
+        type: "deleted",
+        message: `Gasto eliminado: ${expense.description}`,
+        expenseId,
+      });
+    }
   }
 
   const listContent = (
@@ -216,7 +260,12 @@ export default function App() {
                   expenses={activeProject.expenses}
                   onToggle={toggleExpenseStatus}
                   onDelete={deleteExpense}
+                  onEdit={setEditingExpense}
                 />
+              )}
+
+              {activeProject.logs?.length > 0 && (
+                <ActivityLog logs={activeProject.logs} />
               )}
             </>
           ) : listContent}
@@ -245,10 +294,11 @@ export default function App() {
         </div>
       )}
 
-      {showCreateExpense && (
+      {activeProject && (showCreateExpense || editingExpense) && (
         <CreateExpenseSheet
-          onSave={addExpense}
-          onClose={() => setShowCreateExpense(false)}
+          onSave={editingExpense ? updateExpense : addExpense}
+          onClose={() => { setShowCreateExpense(false); setEditingExpense(null); }}
+          expense={editingExpense}
         />
       )}
     </div>

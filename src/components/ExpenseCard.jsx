@@ -1,7 +1,7 @@
-import { Trash2, CheckCircle, Clock } from 'lucide-react';
+import { Trash2, CheckCircle, Clock, Pencil } from 'lucide-react';
 import { formatCOP } from '../utils.js';
 
-export default function ExpenseCard({ expense, onToggle, onDelete }) {
+export default function ExpenseCard({ expense, onToggle, onDelete, onEdit }) {
   const isPaid = expense.status === "paid";
 
   return (
@@ -13,6 +13,12 @@ export default function ExpenseCard({ expense, onToggle, onDelete }) {
         </div>
         <div className="flex items-center gap-2 shrink-0 ml-3">
           <span className="font-extrabold text-[16px] text-[var(--color-teal-dark)]">{formatCOP(expense.amount)}</span>
+          <button
+            onClick={() => onEdit(expense)}
+            className="bg-[rgba(20,184,166,0.08)] border border-[rgba(20,184,166,0.25)] text-[var(--color-teal-dark)] rounded-lg p-[6px_8px] flex items-center"
+          >
+            <Pencil size={14} />
+          </button>
           <button
             onClick={() => onDelete(expense.id)}
             className="bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] text-[#DC2626] rounded-lg p-[6px_8px] flex items-center"

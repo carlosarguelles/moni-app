@@ -6,7 +6,7 @@ import {
   createColumnHelper,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { ArrowUpDown, Trash2, CheckCircle, Clock } from 'lucide-react';
+import { ArrowUpDown, Trash2, CheckCircle, Clock, Pencil } from 'lucide-react';
 import { formatCOP } from '../utils.js';
 
 const columnHelper = createColumnHelper();
@@ -56,20 +56,28 @@ const columns = [
     id: 'actions',
     header: '',
     cell: ({ row, table }) => {
-      const { onDelete } = table.options.meta;
+      const { onDelete, onEdit } = table.options.meta;
       return (
-        <button
-          onClick={() => onDelete(row.original.id)}
-          className="bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] text-[#DC2626] rounded-lg p-[6px_8px] flex items-center"
-        >
-          <Trash2 size={14} />
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => onEdit(row.original)}
+            className="bg-[rgba(20,184,166,0.08)] border border-[rgba(20,184,166,0.25)] text-[var(--color-teal-dark)] rounded-lg p-[6px_8px] flex items-center"
+          >
+            <Pencil size={14} />
+          </button>
+          <button
+            onClick={() => onDelete(row.original.id)}
+            className="bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] text-[#DC2626] rounded-lg p-[6px_8px] flex items-center"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
       );
     },
   }),
 ];
 
-export default function ExpenseTable({ expenses, onToggle, onDelete }) {
+export default function ExpenseTable({ expenses, onToggle, onDelete, onEdit }) {
   const [sorting, setSorting] = useState([]);
 
   const table = useReactTable({
@@ -79,7 +87,7 @@ export default function ExpenseTable({ expenses, onToggle, onDelete }) {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    meta: { onToggle, onDelete },
+    meta: { onToggle, onDelete, onEdit },
   });
 
   return (
