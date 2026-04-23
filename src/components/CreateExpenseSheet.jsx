@@ -120,7 +120,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
               value={description}
               onChange={e => setDescription(e.target.value)}
               placeholder="Ej: Cena restaurant"
-              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[15px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
+              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
             />
           </div>
 
@@ -132,7 +132,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
               onChange={e => setPerson(e.target.value)}
               placeholder="Ej: Carlos"
               list="people-suggestions"
-              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[15px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
+              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
             />
             {people?.length > 0 && (
               <datalist id="people-suggestions">
@@ -148,7 +148,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
                 type="date"
                 value={date}
                 onChange={e => setDate(e.target.value)}
-                className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[15px] text-[var(--color-text)]"
+                className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)]"
               />
             </div>
             <div className="flex-1">
@@ -156,7 +156,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
               <select
                 value={status}
                 onChange={e => setStatus(e.target.value)}
-                className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[15px] text-[var(--color-text)]"
+                className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)]"
               >
                 <option value="pending">Pendiente</option>
                 <option value="paid">Pagado</option>
@@ -182,12 +182,12 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
                   onChange={e => setSingleAmount(e.target.value)}
                   placeholder="50000"
                   min="1"
-                  className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[15px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
+                  className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
                 />
                 {total > 0 && (
                   <div className="mt-2 text-right">
                     <span className="text-[13px] text-[var(--color-text-muted)]">Total: </span>
-                    <span className="text-[15px] font-bold text-[var(--color-teal-dark)]">{formatCOP(total)}</span>
+                    <span className="text-[16px] font-bold text-[var(--color-teal-dark)]">{formatCOP(total)}</span>
                   </div>
                 )}
               </div>
@@ -211,7 +211,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
                         value={item.description}
                         onChange={e => updateItem(item.id, "description", e.target.value)}
                         placeholder={`Ítem ${idx + 1} (ej: Fish)`}
-                        className="flex-1 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-3 py-2.5 text-[14px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
+                        className="flex-1 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-3 py-2.5 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
                       />
                       <input
                         type="number"
@@ -219,7 +219,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
                         onChange={e => updateItem(item.id, "amount", e.target.value)}
                         placeholder="0"
                         min="1"
-                        className="w-28 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-3 py-2.5 text-[14px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
+                        className="w-28 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-3 py-2.5 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
                       />
                       {items.length > 1 && (
                         <button
@@ -236,7 +236,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
                 {total > 0 && (
                   <div className="mt-2 text-right">
                     <span className="text-[13px] text-[var(--color-text-muted)]">Total: </span>
-                    <span className="text-[15px] font-bold text-[var(--color-teal-dark)]">{formatCOP(total)}</span>
+                    <span className="text-[16px] font-bold text-[var(--color-teal-dark)]">{formatCOP(total)}</span>
                   </div>
                 )}
               </div>
@@ -250,7 +250,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
               onChange={e => setNote(e.target.value)}
               placeholder="Algo adicional..."
               rows="2"
-              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[15px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)] resize-none"
+              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)] resize-none"
             />
           </div>
         </div>
@@ -262,7 +262,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
             !person.trim() ||
             (!isStacked ? !singleAmount || Number(singleAmount) < 1 : items.filter(i => i.description.trim() && i.amount).length === 0)
           }
-          className="w-full mt-5 bg-[var(--color-teal)] text-white font-bold text-[15px] py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full mt-5 bg-[var(--color-teal)] text-white font-bold text-[16px] py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <Check size={18} /> {isEdit ? "Actualizar Gasto" : "Guardar Gasto"}
         </button>
