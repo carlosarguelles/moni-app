@@ -109,7 +109,7 @@ export default function PersonSummary({ expenses }) {
             {summaries.map((s) => (
               <div
                 key={s.name}
-                className="flex items-center gap-4 py-3 border-b border-[var(--stat-border)] last:border-b-0"
+                className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3 border-b border-[var(--stat-border)] last:border-b-0"
               >
                 <Avatar name={s.name} />
 
@@ -122,8 +122,8 @@ export default function PersonSummary({ expenses }) {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-6">
-                  <div className="text-right">
+                <div className="flex items-center gap-x-4 gap-y-1 sm:gap-6 flex-wrap sm:flex-nowrap">
+                  <div className="text-right min-w-[70px]">
                     <p className="text-[10px] text-[var(--color-text-faint)] uppercase tracking-wide">
                       Total
                     </p>
@@ -131,13 +131,13 @@ export default function PersonSummary({ expenses }) {
                       {formatCOP(s.total)}
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right min-w-[70px]">
                     <p className="text-[10px] text-[var(--color-text-faint)] uppercase tracking-wide">
                       Pagado
                     </p>
                     <p className="text-[14px] font-semibold text-[#059669]">{formatCOP(s.paid)}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right min-w-[70px]">
                     <p className="text-[10px] text-[var(--color-text-faint)] uppercase tracking-wide">
                       Pendiente
                     </p>
