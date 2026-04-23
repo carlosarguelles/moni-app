@@ -24,7 +24,7 @@
           pname = "shared-expenses";
           version = "1.0.0";
           src = ./.;
-          npmDepsHash = "sha256-IxoPfqSD3oL4R6MEfi0IQG7mX2Y0cGBuzbdsxc61wsU=";
+          npmDepsHash = "sha256-wNVyjp5+jyu6/CEW/QuiT7Oye8S02JqFpMAS+/iTnc0=";
           VITE_BASE_URL = builtins.getEnv "VITE_BASE_URL";
           buildPhase = "npm run build";
           installPhase = "cp -r dist/. $out/";
