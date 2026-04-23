@@ -156,7 +156,7 @@ export default function App() {
             value={newProjectName}
             onChange={e => setNewProjectName(e.target.value)}
             placeholder="Ej: Viaje, Casa, Oficina"
-            className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[15px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)] mb-3"
+            className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)] mb-3"
           />
           <div className="flex gap-2">
             <button
@@ -196,7 +196,7 @@ export default function App() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-[15px] text-[var(--color-teal-dark)]">{formatCOP(total)}</span>
+                    <span className="font-bold text-[16px] text-[var(--color-teal-dark)]">{formatCOP(total)}</span>
                     <button
                       onClick={e => { e.stopPropagation(); deleteProject(project.id); }}
                       className="p-2 rounded-lg bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] text-[#DC2626]"
@@ -277,7 +277,7 @@ export default function App() {
         <div className="fixed bottom-safe-fab left-0 right-0 z-50 flex justify-center pointer-events-none">
           <button
             onClick={() => setShowCreateExpense(true)}
-            className="bg-[var(--color-teal)] text-white rounded-full px-7 py-3.5 text-[15px] font-bold flex items-center gap-2 pointer-events-auto shadow-lg"
+            className="bg-[var(--color-teal)] text-white rounded-full px-7 py-3.5 text-[16px] font-bold flex items-center gap-2 pointer-events-auto shadow-lg"
           >
             <Plus size={22} /> Agregar Gasto
           </button>
@@ -288,7 +288,7 @@ export default function App() {
         <div className="fixed bottom-safe-fab left-0 right-0 z-50 flex justify-center pointer-events-none">
           <button
             onClick={() => setShowCreateProject(true)}
-            className="bg-[var(--color-teal)] text-white rounded-full px-7 py-3.5 text-[15px] font-bold flex items-center gap-2 pointer-events-auto shadow-lg"
+            className="bg-[var(--color-teal)] text-white rounded-full px-7 py-3.5 text-[16px] font-bold flex items-center gap-2 pointer-events-auto shadow-lg"
           >
             <Plus size={22} /> Nuevo Proyecto
           </button>
