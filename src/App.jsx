@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, ArrowLeft, Trash2, Wallet, Receipt } from 'lucide-react';
 import { loadProjects, saveProjects, formatCOP, haptic } from './utils.js';
-import ExpenseCard from './components/ExpenseCard.jsx';
+import ExpenseList from './components/ExpenseList.jsx';
 import BalanceSheet from './components/BalanceSheet.jsx';
 import PersonSummary from './components/PersonSummary.jsx';
 import CreateExpenseSheet from './components/CreateExpenseSheet.jsx';
@@ -212,20 +212,11 @@ export default function App() {
                   <p className="text-[14px] text-[var(--color-text-faint)]">No hay gastos en este proyecto</p>
                 </div>
               ) : (
-                <div>
-                  {activeProject.expenses
-                    .slice()
-                    .sort((a, b) => new Date(b.date) - new Date(a.date))
-                    .map(expense => (
-                      <ExpenseCard
-                        key={expense.id}
-                        expense={expense}
-                        onToggle={toggleExpenseStatus}
-                        onDelete={deleteExpense}
-                      />
-                    ))
-                  }
-                </div>
+                <ExpenseList
+                  expenses={activeProject.expenses}
+                  onToggle={toggleExpenseStatus}
+                  onDelete={deleteExpense}
+                />
               )}
             </>
           ) : listContent}
