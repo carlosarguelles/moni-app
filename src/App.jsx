@@ -3,6 +3,7 @@ import { Plus, ArrowLeft, Trash2, Wallet, Receipt } from 'lucide-react';
 import { loadProjects, saveProjects, formatCOP, haptic } from './utils.js';
 import ExpenseCard from './components/ExpenseCard.jsx';
 import BalanceSheet from './components/BalanceSheet.jsx';
+import PersonSummary from './components/PersonSummary.jsx';
 import CreateExpenseSheet from './components/CreateExpenseSheet.jsx';
 
 export default function App() {
@@ -202,6 +203,7 @@ export default function App() {
         <div className="max-w-[640px] mx-auto pt-safe-top px-4 pb-safe-fab">
           {activeProject ? (
             <>
+              <PersonSummary expenses={activeProject.expenses} />
               <BalanceSheet expenses={activeProject.expenses} />
 
               {activeProject.expenses.length === 0 ? (
