@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Tabs from './Tabs.jsx';
 import { formatCOP, getExpenseTotal } from '../utils.js';
 
 function getAvatarColor(name) {
@@ -55,72 +56,37 @@ export default function PersonSummary({ expenses }) {
 
   const perPerson = people.length > 0 ? totalPaid / people.length : 0;
 
-  const balances = {};
+  const equalBalances = {};
   for (const person of people) {
-    if (strategy === "equal") {
-      const paid = expenses
-        .filter(e => e.person === person && e.status === "paid")
-        .reduce((sum, e) => sum + getExpenseTotal(e), 0);
-      balances[person] = paid - perPerson;
-    } else {
-      const owed = expenses
-        .filter(e => e.person === person)
-        .reduce((sum, e) => sum + getExpenseTotal(e), 0);
-      const paidOwn = expenses
-        .filter(e => e.person === person && e.status === "paid")
-        .reduce((sum, e) => sum + getExpenseTotal(e), 0);
-      balances[person] = paidOwn - owed;
-    }
+    const paid = expenses
+      .filter(e => e.person === person && e.status === "paid")
+      .reduce((sum, e) => sum + getExpenseTotal(e), 0);
+    equalBalances[person] = paid - perPerson;
+  }
+
+  const individualBalances = {};
+  for (const person of people) {
+    const owed = expenses
+      .filter(e => e.person === person)
+      .reduce((sum, e) => sum + getExpenseTotal(e), 0);
+    const paidOwn = expenses
+      .filter(e => e.person === person && e.status === "paid")
+      .reduce((sum, e) => sum + getExpenseTotal(e), 0);
+    individualBalances[person] = paidOwn - owed;
   }
 
   return (
     <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-[16px] p-5 mb-4">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex bg-[var(--input-bg)] border border-[var(--input-border)] rounded-full p-1">
-          <button
-            onClick={() => setActiveTab("resumen")}
-            className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
-              activeTab === "resumen"
-                ? "bg-[var(--color-teal)] text-white"
-                : "text-[var(--color-text-muted)]"
-            }`}
-          >
-            Resumen
-          </button>
-          <button
-            onClick={() => setActiveTab("balance")}
-            className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
-              activeTab === "balance"
-                ? "bg-[var(--color-teal)] text-white"
-                : "text-[var(--color-text-muted)]"
-            }`}
-          >
-            Balance
-          </button>
-        </div>
+        <Tabs value={activeTab} onChange={setActiveTab}>
+          <Tabs.Tab value="resumen" label="Resumen" />
+          <Tabs.Tab value="balance" label="Balance" />
+        </Tabs>
         {activeTab === "balance" && (
-          <div className="flex bg-[var(--input-bg)] border border-[var(--input-border)] rounded-full p-1">
-            <button
-              onClick={() => setStrategy("equal")}
-              className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
-                strategy === "equal"
-                  ? "bg-[var(--color-teal)] text-white"
-                  : "text-[var(--color-text-muted)]"
-              }`}
-            >
-              Igual
-            </button>
-            <button
-              onClick={() => setStrategy("individual")}
-              className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
-                strategy === "individual"
-                  ? "bg-[var(--color-teal)] text-white"
-                  : "text-[var(--color-text-muted)]"
-              }`}
-            >
-              Individual
-            </button>
-          </div>
+          <Tabs value={strategy} onChange={setStrategy}>
+            <Tabs.Tab value="equal" label="Igual" />
+            <Tabs.Tab value="individual" label="Individual" />
+          </Tabs>
         )}
       </div>
 
@@ -170,7 +136,7 @@ export default function PersonSummary({ expenses }) {
 
           <div className="space-y-3">
             {people.map(person => {
-              const balance = balances[person];
+              const balance = strategy === "equal" ? equalBalances[person] : individualBalances[person];
               const isPositive = balance >= 0;
               return (
                 <div key={person} className="flex items-center gap-4 py-3 border-b border-[var(--stat-border)] last:border-b-0">

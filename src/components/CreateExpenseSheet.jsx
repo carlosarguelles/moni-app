@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { X, Check, Plus, Trash2, Layers, Square } from 'lucide-react';
+import { X, Check, Plus, Trash2, Square, Layers } from 'lucide-react';
+import Tabs from './Tabs.jsx';
 import { getExpenseTotal, formatCOP } from '../utils.js';
 
 export default function CreateExpenseSheet({ onSave, onClose, expense }) {
@@ -160,30 +161,10 @@ export default function CreateExpenseSheet({ onSave, onClose, expense }) {
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-[13px] font-semibold text-[var(--color-text-muted)]">Tipo de gasto</label>
-              <div className="flex rounded-xl border border-[var(--input-border)] overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setIsStacked(false)}
-                  className={`flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold transition-all ${
-                    !isStacked
-                      ? 'bg-[var(--color-teal)] text-white'
-                      : 'bg-[var(--input-bg)] text-[var(--color-text-muted)]'
-                  }`}
-                >
-                  <Square size={14} /> Simple
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsStacked(true)}
-                  className={`flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold transition-all ${
-                    isStacked
-                      ? 'bg-[var(--color-teal)] text-white'
-                      : 'bg-[var(--input-bg)] text-[var(--color-text-muted)]'
-                  }`}
-                >
-                  <Layers size={14} /> Apilado
-                </button>
-              </div>
+              <Tabs value={isStacked ? 'apilado' : 'simple'} onChange={v => setIsStacked(v === 'apilado')}>
+                <Tabs.Tab value="simple" label="Simple" icon={<Square size={14} />} />
+                <Tabs.Tab value="apilado" label="Apilado" icon={<Layers size={14} />} />
+              </Tabs>
             </div>
 
             {!isStacked ? (
