@@ -19,6 +19,15 @@ export default function App() {
     saveProjects(projects);
   }, [projects]);
 
+  useEffect(() => {
+    if (showCreateExpense || editingExpense) {
+      document.body.classList.add('sheet-open');
+    } else {
+      document.body.classList.remove('sheet-open');
+    }
+    return () => document.body.classList.remove('sheet-open');
+  }, [showCreateExpense, editingExpense]);
+
   const activeProject = projects.find((p) => p.id === activeProjectId) ?? null;
 
   function updateProject(id, updater) {
