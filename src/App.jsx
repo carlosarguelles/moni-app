@@ -4,7 +4,14 @@ import ActivityLog from './components/ActivityLog.jsx';
 import CreateExpenseSheet from './components/CreateExpenseSheet.jsx';
 import ExpenseList from './components/ExpenseList.jsx';
 import PersonSummary from './components/PersonSummary.jsx';
-import { formatCOP, getExpenseTotal, haptic, loadProjects, saveProjects } from './utils.js';
+import {
+  formatCOP,
+  getExpenseTotal,
+  haptic,
+  loadProjects,
+  PROJECT_TYPES,
+  saveProjects,
+} from './utils.js';
 
 export default function App() {
   const [projects, setProjects] = useState(() => loadProjects());
@@ -13,6 +20,7 @@ export default function App() {
   const [editingExpense, setEditingExpense] = useState(null);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectType, setNewProjectType] = useState(PROJECT_TYPES.SHARED);
   const [viewState, setViewState] = useState('idle');
 
   useEffect(() => {
@@ -65,12 +73,14 @@ export default function App() {
     const project = {
       id: crypto.randomUUID(),
       name,
+      type: newProjectType,
       expenses: [],
       logs: [],
       createdAt: new Date().toISOString(),
     };
     setProjects((ps) => [...ps, project]);
     setNewProjectName('');
+    setNewProjectType(PROJECT_TYPES.SHARED);
     setShowCreateProject(false);
     navigateTo(project.id);
   }
@@ -176,14 +186,39 @@ export default function App() {
             value={newProjectName}
             onChange={(e) => setNewProjectName(e.target.value)}
             placeholder="Ej: Viaje, Casa, Oficina"
-            className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)] mb-3"
+            className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)] mb-4"
           />
+          <div className="flex gap-2 mb-4">
+            <button
+              type="button"
+              onClick={() => setNewProjectType(PROJECT_TYPES.SHARED)}
+              className={`flex-1 py-3 rounded-xl text-[14px] font-semibold transition-colors ${
+                newProjectType === PROJECT_TYPES.SHARED
+                  ? 'bg-[var(--color-teal)] text-white'
+                  : 'bg-[var(--input-bg)] border border-[var(--input-border)] text-[var(--color-text-dim)]'
+              }`}
+            >
+              Compartido
+            </button>
+            <button
+              type="button"
+              onClick={() => setNewProjectType(PROJECT_TYPES.PERSONAL)}
+              className={`flex-1 py-3 rounded-xl text-[14px] font-semibold transition-colors ${
+                newProjectType === PROJECT_TYPES.PERSONAL
+                  ? 'bg-[var(--color-teal)] text-white'
+                  : 'bg-[var(--input-bg)] border border-[var(--input-border)] text-[var(--color-text-dim)]'
+              }`}
+            >
+              Personal
+            </button>
+          </div>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => {
                 setShowCreateProject(false);
                 setNewProjectName('');
+                setNewProjectType(PROJECT_TYPES.SHARED);
               }}
               className="flex-1 py-2.5 rounded-xl text-[14px] font-semibold bg-[var(--cancel-bg)] border border-[var(--cancel-border)] text-[var(--cancel-color)]"
             >
@@ -267,6 +302,11 @@ export default function App() {
                 {activeProject.expenses.length} gasto
                 {activeProject.expenses.length !== 1 ? 's' : ''}
               </span>
+              {activeProject.type === 'personal' && (
+                <span className="ml-2 text-[10px] font-bold bg-[var(--stat-bg)] border border-[var(--stat-border)] text-[var(--color-teal-dark)] px-2 py-0.5 rounded-full uppercase tracking-wide">
+                  Personal
+                </span>
+              )}
             </div>
             <button
               type="button"
@@ -290,7 +330,7 @@ export default function App() {
         <div className="max-w-[640px] mx-auto pt-safe-top px-4 pb-safe-fab">
           {activeProject ? (
             <>
-              <PersonSummary expenses={activeProject.expenses} />
+              <PersonSummary expenses={activeProject.expenses} projectType={activeProject.type} />
 
               {activeProject.expenses.length === 0 ? (
                 <div className="text-center py-8">
@@ -302,6 +342,7 @@ export default function App() {
               ) : (
                 <ExpenseList
                   expenses={activeProject.expenses}
+                  projectType={activeProject.type}
                   onToggle={toggleExpenseStatus}
                   onDelete={deleteExpense}
                   onEdit={setEditingExpense}
@@ -348,6 +389,7 @@ export default function App() {
             setEditingExpense(null);
           }}
           expense={editingExpense}
+          projectType={activeProject.type}
           people={[...new Set(activeProject.expenses.map((e) => e.person).filter(Boolean))]}
         />
       )}

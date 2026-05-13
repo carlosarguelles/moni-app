@@ -1,5 +1,10 @@
 export const STORAGE_KEY = 'moni_v1';
 
+export const PROJECT_TYPES = {
+  SHARED: 'shared',
+  PERSONAL: 'personal',
+};
+
 export const formatCOP = (n) => `$${n.toLocaleString('es-CO')}`;
 
 export function haptic(ms = 15) {

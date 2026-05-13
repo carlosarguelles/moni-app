@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import ExpenseCard from './ExpenseCard.jsx';
 import ExpenseTable from './ExpenseTable.jsx';
 
-export default function ExpenseList({ expenses, onToggle, onDelete, onEdit }) {
+export default function ExpenseList({ expenses, projectType, onToggle, onDelete, onEdit }) {
   const [isDesktop, setIsDesktop] = useState(
     () => typeof window !== 'undefined' && window.innerWidth >= 640
   );
@@ -17,7 +17,13 @@ export default function ExpenseList({ expenses, onToggle, onDelete, onEdit }) {
 
   if (isDesktop) {
     return (
-      <ExpenseTable expenses={sorted} onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+      <ExpenseTable
+        expenses={sorted}
+        projectType={projectType}
+        onToggle={onToggle}
+        onDelete={onDelete}
+        onEdit={onEdit}
+      />
     );
   }
 
@@ -27,6 +33,7 @@ export default function ExpenseList({ expenses, onToggle, onDelete, onEdit }) {
         <ExpenseCard
           key={expense.id}
           expense={expense}
+          projectType={projectType}
           onToggle={onToggle}
           onDelete={onDelete}
           onEdit={onEdit}
