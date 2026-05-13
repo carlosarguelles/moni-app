@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { formatCOP } from '../utils.js';
 import Tabs from './Tabs.jsx';
 
-export default function CreateExpenseSheet({ onSave, onClose, expense, people }) {
+export default function CreateExpenseSheet({ onSave, onClose, expense, people, projectType }) {
+  const isPersonal = projectType === 'personal';
   const isEdit = !!expense;
   const [description, setDescription] = useState(expense?.description ?? '');
   const [person, setPerson] = useState(expense?.person ?? '');
@@ -49,7 +50,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
   }
 
   function handleSave() {
-    if (!description.trim() || !person.trim()) return;
+    if (!description.trim() || (!isPersonal && !person.trim())) return;
 
     let saveData;
     if (isStacked) {
@@ -57,7 +58,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
       if (validItems.length === 0) return;
       saveData = {
         description: description.trim(),
-        person: person.trim(),
+        person: isPersonal ? 'Yo' : person.trim(),
         date,
         status,
         note: note.trim(),
@@ -72,7 +73,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
       if (!singleAmount || amount < 1) return;
       saveData = {
         description: description.trim(),
-        person: person.trim(),
+        person: isPersonal ? 'Yo' : person.trim(),
         date,
         status,
         note: note.trim(),
@@ -144,30 +145,32 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
             />
           </div>
 
-          <div>
-            <label
-              htmlFor="expense-person"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block"
-            >
-              Persona
-            </label>
-            <input
-              id="expense-person"
-              type="text"
-              value={person}
-              onChange={(e) => setPerson(e.target.value)}
-              placeholder="Ej: Carlos"
-              list="people-suggestions"
-              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
-            />
-            {people?.length > 0 && (
-              <datalist id="people-suggestions">
-                {people.map((p) => (
-                  <option key={p} value={p} />
-                ))}
-              </datalist>
-            )}
-          </div>
+          {!isPersonal && (
+            <div>
+              <label
+                htmlFor="expense-person"
+                className="text-[13px] font-semibold text-[var(--color-text-muted)] mb-1 block"
+              >
+                Persona
+              </label>
+              <input
+                id="expense-person"
+                type="text"
+                value={person}
+                onChange={(e) => setPerson(e.target.value)}
+                placeholder="Ej: Carlos"
+                list="people-suggestions"
+                className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl px-4 py-3 text-[16px] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)]"
+              />
+              {people?.length > 0 && (
+                <datalist id="people-suggestions">
+                  {people.map((p) => (
+                    <option key={p} value={p} />
+                  ))}
+                </datalist>
+              )}
+            </div>
+          )}
 
           <div className="flex gap-3">
             <div className="flex-1">
@@ -323,7 +326,7 @@ export default function CreateExpenseSheet({ onSave, onClose, expense, people })
           onClick={handleSave}
           disabled={
             !description.trim() ||
-            !person.trim() ||
+            (!isPersonal && !person.trim()) ||
             (!isStacked
               ? !singleAmount || Number(singleAmount) < 1
               : items.filter((i) => i.description.trim() && i.amount).length === 0)

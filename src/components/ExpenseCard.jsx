@@ -2,10 +2,11 @@ import { CheckCircle, ChevronDown, ChevronRight, Clock, Pencil, Trash2 } from 'l
 import { useState } from 'react';
 import { formatCOP, getExpenseTotal } from '../utils.js';
 
-export default function ExpenseCard({ expense, onToggle, onDelete, onEdit }) {
+export default function ExpenseCard({ expense, projectType, onToggle, onDelete, onEdit }) {
   const [expanded, setExpanded] = useState(false);
   const isPaid = expense.status === 'paid';
   const hasItems = expense.items && expense.items.length > 1;
+  const isPersonal = projectType === 'personal';
 
   return (
     <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-[16px] p-4 mb-3 transition-all">
@@ -14,7 +15,9 @@ export default function ExpenseCard({ expense, onToggle, onDelete, onEdit }) {
           <p className="font-bold text-[15px] text-[var(--color-text)] leading-[1.3]">
             {expense.description}
           </p>
-          <p className="text-[13px] text-[var(--color-text-faint)] mt-0.5">{expense.person}</p>
+          {!isPersonal && (
+            <p className="text-[13px] text-[var(--color-text-faint)] mt-0.5">{expense.person}</p>
+          )}
         </div>
         <div className="flex items-center gap-2 shrink-0 ml-3">
           <span className="font-extrabold text-[16px] text-[var(--color-teal-dark)]">
